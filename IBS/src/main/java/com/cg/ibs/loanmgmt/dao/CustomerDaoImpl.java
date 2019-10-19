@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.math.BigDecimal;
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -148,6 +149,7 @@ public class CustomerDaoImpl implements CustomerDao {
 				preparedStatement.setBigDecimal(2, new BigDecimal(loanMaster.getCustomerBean().getUCI()));
 				preparedStatement.executeUpdate();
 				isDone = true;
+				connection.commit();
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -211,13 +213,28 @@ public class CustomerDaoImpl implements CustomerDao {
 		}
 
 		try (PreparedStatement preparedStatement = connection.prepareStatement(QueryMapper.INS_APP);) {
-			System.out.println(loanMaster.getApplicationNumber());
-			preparedStatement.setLong(1,loanMaster.getApplicationNumber());
+			preparedStatement.setLong(1, loanMaster.getApplicationNumber());
 			preparedStatement.setBigDecimal(2, uciTemp);
 			preparedStatement.setString(3, "pending");
+			preparedStatement.setDouble(4, loanMaster.getLoanAmount());
+			preparedStatement.setInt(5, loanMaster.getLoanTenure());
+			preparedStatement.setInt(6, loanMaster.getTotalNumberOfEmis());
+			preparedStatement.setDouble(7, loanMaster.getEmiAmount());
+			preparedStatement.setDate(8, Date.valueOf(loanMaster.getAppliedDate()));
+			if (loanMaster.getLoanType() == LoanType.HOME_LOAN) {
+				preparedStatement.setInt(9, 1);
+			} else if (loanMaster.getLoanType() == LoanType.EDUCATION_LOAN) {
+				preparedStatement.setInt(9, 2);
+			} else if (loanMaster.getLoanType() == LoanType.PERSONAL_LOAN) {
+				preparedStatement.setInt(9, 3);
+			} else if (loanMaster.getLoanType() == LoanType.VEHICLE_LOAN) {
+				preparedStatement.setInt(9, 4);
+			}
+			preparedStatement.setDouble(10, loanMaster.getBalance());
+			preparedStatement.setInt(11, loanMaster.getNumberOfEmis());
 			check = true;
 			System.out.println("sent");
-			int i=preparedStatement.executeUpdate();
+			int i = preparedStatement.executeUpdate();
 			connection.commit();
 			System.out.println(i);
 		} catch (SQLException exp) {
@@ -227,4 +244,23 @@ public class CustomerDaoImpl implements CustomerDao {
 
 		return check;
 	}
+
+	@Override
+	public long generateApplicantNumber() throws IBSException {
+		Connection connection = OracleDataBaseUtil.getConnection();
+		long newApplicantNumber = 0;
+		try (PreparedStatement preparedStatement = connection.prepareStatement(QueryMapper.GENERATE_APPLICANT_NUM);) {
+			try (ResultSet resultSet = preparedStatement.executeQuery()) {
+				if (resultSet.next()) {
+					newApplicantNumber = resultSet.getLong(1);
+				}
+
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+			throw new IBSException(ExceptionMessages.MESSAGEFORSQLEXCEPTION);
+		}
+		return newApplicantNumber;
+	}
+
 }

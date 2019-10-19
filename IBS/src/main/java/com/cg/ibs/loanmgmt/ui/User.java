@@ -316,17 +316,18 @@ public class User implements ExceptionMessages {
 			case 1: {
 				System.out.println("\nNew Loan Application\n");
 				String custId = "";
-				boolean shallContinue=true;				
-				while(shallContinue) {
+				boolean shallContinue = true;
+				while (shallContinue) {
 					System.out.println("Enter your customer id :- ");
 					custId = read.next();
-					shallContinue=!customerService.verifyCustomer(custId);
-					if(shallContinue) {
+					shallContinue = !customerService.verifyCustomer(custId);
+					if (shallContinue) {
 						System.out.println("Not a Registered Customer \n ");
 					}
-				} 
+				}
 				try {
-					customerService.sendLoanForVerification(customerService.getLoanValues(loanService.setLoanDetails(loanBean), custId));
+					customerService.sendLoanForVerification(
+							customerService.getLoanValues(loanService.setLoanDetails(loanBean), custId));
 					uploadDocument(customerService.getLoanValues(loanService.setLoanDetails(loanBean), custId));
 				} catch (SQLException exp) {
 					System.out.println(exp.getMessage());
@@ -514,16 +515,17 @@ public class User implements ExceptionMessages {
 		}
 	}
 
-
 	// VERIFY LOAN
 	public void verifyLoan() throws IBSException {
 		{
-			Map<Long,LoanMaster> pendingLoans = new HashMap<>();
+			Map<Long, LoanMaster> pendingLoans = new HashMap<>();
+			long applicantInput = 0;
 			try {
 				pendingLoans = bankService.getLoanDetailsForVerification();
+				System.out.println("Application Number");
+				System.out.println("--------------------");
 				for (Map.Entry<Long, LoanMaster> entry : pendingLoans.entrySet()) {
-					System.out.println("Application Number =\t"+ entry.getKey());
-					System.out.println(entry.getValue());
+					System.out.println(entry.getKey());
 				}
 			} catch (ClassNotFoundException | IOException exp) {
 				try {
@@ -538,7 +540,16 @@ public class User implements ExceptionMessages {
 			} catch (Exception exp) {
 				throw new IBSException(ExceptionMessages.MESSAGEFORFILENOTFOUND);
 			}
-			System.out.println("Application For Loan : " + loanMaster);
+			System.out.println("Enter Application Number to approve/decline : ");
+			applicantInput = read.nextLong();
+			for (Map.Entry<Long, LoanMaster> entry : pendingLoans.entrySet()) {
+				if(applicantInput==entry.getKey()) {
+					System.out.println(entry.getValue());
+					break;
+				}
+			}
+			System.out.println("Downloading Document");
+			if(bankService.downloadDocument(applicantInput)) {
 			System.out.println("Document for the above loan has been downloaded in the downloads folder ");
 			System.out.println("Verification Response : ");
 			System.out.println("1. Approve Loan \n2. Decline Loan");
@@ -570,7 +581,7 @@ public class User implements ExceptionMessages {
 				}
 			}
 		}
-
+		}
 	}
 
 	// VERIFY PRECLOSURE

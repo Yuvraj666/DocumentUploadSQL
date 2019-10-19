@@ -4,9 +4,10 @@ import java.time.LocalDate;
 
 public class LoanMaster{
 
-	private static long incLoanNumber = 1000;
-	private static long incApplicationNumber = 100;
-	private String loanNumber;
+
+
+
+	private long loanNumber;
 	private LoanStatus loanStatus;
 	private long applicationNumber;
 	private double loanAmount;
@@ -21,7 +22,7 @@ public class LoanMaster{
 	private LocalDate appliedDate;
 	private LocalDate nextEmiDate;
 
-	public LoanMaster(String loanNumber, LoanType loanType, double loanAmount, int loanTenure, double emiAmount,
+	public LoanMaster(long loanNumber, LoanType loanType, double loanAmount, int loanTenure, double emiAmount,
 			CustomerBean customerBean, int numberOfEmis, int totalNumberOfEmis, LocalDate appliedDate,
 			LocalDate nextEmiDate) {
 		super();
@@ -35,12 +36,6 @@ public class LoanMaster{
 		this.totalNumberOfEmis = totalNumberOfEmis;
 		this.appliedDate = appliedDate;
 		this.nextEmiDate = nextEmiDate;
-	}
-	public static long generateApplicationNumber() {
-		return ++incApplicationNumber;
-	}
-	public static long generateLoanNumber() {
-		return ++incLoanNumber;
 	}
 
 	public LoanMaster() {
@@ -63,13 +58,12 @@ public class LoanMaster{
 		this.loanTenure = loanTenure;
 	}
 
-	public String getLoanNumber() {
+	public long getLoanNumber() {
 		return loanNumber;
 	}
 
-	public String setLoanNumber(long loanNum) {
-		this.loanNumber = Long.toString(loanNum);
-		return loanNumber;
+	public void setLoanNumber(long loanNumber) {
+		this.loanNumber = loanNumber;
 	}
 
 	public CustomerBean getCustomerBean() {

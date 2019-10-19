@@ -31,4 +31,6 @@ public interface CustomerDao {
 	public boolean sendPreClosureForVerification(LoanMaster loanMaster) throws FileNotFoundException, IOException;
 
 	public boolean uploadDocument(Document document, LoanMaster loanMaster) throws IBSException;
+
+	public long generateApplicantNumber() throws IBSException;
 }

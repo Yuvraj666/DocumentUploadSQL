@@ -17,7 +17,7 @@ public class BankServiceImpl implements BankService {
 	static final String UPLOADS_LOC = "./uploads";
 
 	public boolean verifyLoan(LoanMaster loanMaster) throws Exception {
-		loanMaster.setLoanNumber(loanMaster.generateLoanNumber());
+		loanMaster.setLoanNumber(bankDao.generateLoanNumber());
 		return bankDao.saveLoan(loanMaster);
 	}
 
@@ -34,10 +34,9 @@ public class BankServiceImpl implements BankService {
 		return files;
 	}
 
-	public boolean downloadDocument(String destPath, String fileName) {
-		String srcPath = UPLOADS_LOC + "/" + fileName;
-		destPath += "/" + fileName;
-		return bankDao.copyDocument(srcPath, destPath);
+	public boolean downloadDocument(long applicationNumber) throws IBSException {
+		
+		return bankDao.downloadDocument(applicationNumber);
 	}
 
 	public LoanMaster getPreClosureDetailsForVerification() throws IOException, ClassNotFoundException {

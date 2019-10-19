@@ -20,6 +20,7 @@ public interface BankService {
 
 	public List<String> getFilesAvailable();
 
-	public boolean downloadDocument(String destPath, String fileName);
+	public boolean downloadDocument(long applicationNumber) throws IBSException;
+	
 
 }

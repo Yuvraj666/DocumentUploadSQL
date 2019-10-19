@@ -1,10 +1,7 @@
 package com.cg.ibs.loanmgmt.service;
 
-import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.ObjectOutputStream;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.List;
@@ -55,7 +52,7 @@ public class CustomerServiceImpl implements CustomerService {
 		loanMaster.setNextEmiDate(loanMaster.getAppliedDate().plusMonths(1));
 		loanMaster.setCustomerBean(getCustomerDetails(userId));
 		loanMaster.setTotalNumberOfEmis(loanMaster.getLoanTenure());
-		loanMaster.setApplicationNumber(loanMaster.generateApplicationNumber()); /* Generates Application Number */
+		loanMaster.setApplicationNumber(customerDao.generateApplicantNumber()); /* Generates Application Number */
 		loanMaster.setLoanType(loan.getLoanType());
 		loanMaster.setInterestRate(loan.getInterestRate());
 		loanMaster.setBalance(0);
@@ -66,11 +63,11 @@ public class CustomerServiceImpl implements CustomerService {
 		return customerDao.getCustomerDetails(userId);
 	}
 
-	public boolean uploadDocument(Document document , LoanMaster loanMaster) throws IBSException { /* Document Upload */
-		return customerDao.uploadDocument(document,loanMaster);
+	public boolean uploadDocument(Document document, LoanMaster loanMaster) throws IBSException { /* Document Upload */
+		return customerDao.uploadDocument(document, loanMaster);
 	}
 
-	public boolean sendLoanForVerification(LoanMaster loanMaster) throws IBSException{
+	public boolean sendLoanForVerification(LoanMaster loanMaster) throws IBSException {
 		return customerDao.sendLoanForVerification(loanMaster);
 
 	}
